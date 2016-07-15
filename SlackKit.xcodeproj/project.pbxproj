@@ -292,6 +292,9 @@
 					26072A331BB48B3A00CD650C = {
 						CreatedOnToolsVersion = 7.0;
 					};
+					263993951CE90EE0004A6E93 = {
+						LastSwiftMigration = 0800;
+					};
 				};
 			};
 			buildConfigurationList = 26072A2E1BB48B3A00CD650C /* Build configuration list for PBXProject "SlackKit" */;
@@ -580,6 +583,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -607,6 +611,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

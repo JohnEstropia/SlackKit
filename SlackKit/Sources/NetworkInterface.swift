@@ -27,17 +27,17 @@ internal struct NetworkInterface {
     
     private let apiUrl = "https://slack.com/api/"
     
-    internal func request(endpoint: SlackAPIEndpoint, token: String, parameters: [String: AnyObject]?, successClosure: ([String: AnyObject])->Void, errorClosure: (SlackError)->Void) {
+    internal func request(_ endpoint: SlackAPIEndpoint, token: String, parameters: [String: AnyObject]?, successClosure: ([String: AnyObject])->Void, errorClosure: (SlackError)->Void) {
         var requestString = "\(apiUrl)\(endpoint.rawValue)?token=\(token)"
         if let params = parameters {
             requestString += requestStringFromParameters(params)
         }
-        guard let url =  NSURL(string: requestString) else {
-            errorClosure(SlackError.ClientNetworkError)
+        guard let url =  URL(string: requestString) else {
+            errorClosure(SlackError.clientNetworkError)
             return
         }
-        let request = NSURLRequest(URL:url)
-        NSURLSession.sharedSession().dataTaskWithRequest(request) {
+        let request = URLRequest(url:url)
+        URLSession.shared.dataTask(with: request) {
             (data, response, internalError) -> Void in
             self.handleResponse(data, response: response, internalError: internalError, successClosure: {(json) in
                 successClosure(json)
@@ -47,17 +47,17 @@ internal struct NetworkInterface {
         }.resume()
     }
     
-    internal func uploadRequest(token: String, data: NSData, parameters: [String: AnyObject]?, successClosure: ([String: AnyObject])->Void, errorClosure: (SlackError)->Void) {
+    internal func uploadRequest(_ token: String, data: Data, parameters: [String: AnyObject]?, successClosure: ([String: AnyObject])->Void, errorClosure: (SlackError)->Void) {
         var requestString = "\(apiUrl)\(SlackAPIEndpoint.FilesUpload.rawValue)?token=\(token)"
         if let params = parameters {
             requestString = requestString + requestStringFromParameters(params)
         }
-        guard let url =  NSURL(string: requestString) else {
-            errorClosure(SlackError.ClientNetworkError)
+        guard let url =  URL(string: requestString) else {
+            errorClosure(SlackError.clientNetworkError)
             return
         }
-        let request = NSMutableURLRequest(URL:url)
-        request.HTTPMethod = "POST"
+        let request = NSMutableURLRequest(url:url)
+        request.httpMethod = "POST"
         let boundaryConstant = randomBoundary()
         let contentType = "multipart/form-data; boundary=" + boundaryConstant
         let boundaryStart = "--\(boundaryConstant)\r\n"
@@ -66,17 +66,17 @@ internal struct NetworkInterface {
         let contentTypeString = "Content-Type: \(parameters!["filetype"])\r\n\r\n"
 
         let requestBodyData : NSMutableData = NSMutableData()
-        requestBodyData.appendData(boundaryStart.dataUsingEncoding(NSUTF8StringEncoding)!)
-        requestBodyData.appendData(contentDispositionString.dataUsingEncoding(NSUTF8StringEncoding)!)
-        requestBodyData.appendData(contentTypeString.dataUsingEncoding(NSUTF8StringEncoding)!)
-        requestBodyData.appendData(data)
-        requestBodyData.appendData("\r\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-        requestBodyData.appendData(boundaryEnd.dataUsingEncoding(NSUTF8StringEncoding)!)
+        requestBodyData.append(boundaryStart.data(using: String.Encoding.utf8)!)
+        requestBodyData.append(contentDispositionString.data(using: String.Encoding.utf8)!)
+        requestBodyData.append(contentTypeString.data(using: String.Encoding.utf8)!)
+        requestBodyData.append(data)
+        requestBodyData.append("\r\n".data(using: String.Encoding.utf8)!)
+        requestBodyData.append(boundaryEnd.data(using: String.Encoding.utf8)!)
         
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-        request.HTTPBody = requestBodyData
+        request.httpBody = requestBodyData as Data
 
-        NSURLSession.sharedSession().dataTaskWithRequest(request) {
+        URLSession.shared.dataTask(with: request as URLRequest) {
             (data, response, internalError) -> Void in
             self.handleResponse(data, response: response, internalError: internalError, successClosure: {(json) in
                 successClosure(json)
@@ -86,14 +86,14 @@ internal struct NetworkInterface {
         }.resume()
     }
     
-    private func handleResponse(data: NSData?, response:NSURLResponse?, internalError:NSError?, successClosure: ([String: AnyObject])->Void, errorClosure: (SlackError)->Void) {
-        guard let data = data, response = response as? NSHTTPURLResponse else {
-            errorClosure(SlackError.ClientNetworkError)
+    private func handleResponse(_ data: Data?, response:URLResponse?, internalError:NSError?, successClosure: ([String: AnyObject])->Void, errorClosure: (SlackError)->Void) {
+        guard let data = data, response = response as? HTTPURLResponse else {
+            errorClosure(SlackError.clientNetworkError)
             return
         }
         do {
-            guard let json = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String: AnyObject] else {
-                errorClosure(SlackError.ClientJSONError)
+            guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else {
+                errorClosure(SlackError.clientJSONError)
                 return
             }
             
@@ -105,19 +105,19 @@ internal struct NetworkInterface {
                     if let errorString = json["error"] as? String {
                         throw ErrorDispatcher.dispatch(errorString)
                     } else {
-                        throw SlackError.UnknownError
+                        throw SlackError.unknownError
                     }
                 }
             case 429:
-                throw SlackError.TooManyRequests
+                throw SlackError.tooManyRequests
             default:
-                throw SlackError.ClientNetworkError
+                throw SlackError.clientNetworkError
             }
         } catch let error {
             if let slackError = error as? SlackError {
                 errorClosure(slackError)
             } else {
-                errorClosure(SlackError.UnknownError)
+                errorClosure(SlackError.unknownError)
             }
         }
     }
@@ -126,10 +126,10 @@ internal struct NetworkInterface {
         return String(format: "slackkit.boundary.%08x%08x", arc4random(), arc4random())
     }
     
-    private func requestStringFromParameters(parameters: [String: AnyObject]) -> String {
+    private func requestStringFromParameters(_ parameters: [String: AnyObject]) -> String {
         var requestString = ""
         for key in parameters.keys {
-            if let value = parameters[key] as? String, encodedValue = value.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLHostAllowedCharacterSet()) {
+            if let value = parameters[key] as? String, encodedValue = value.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed) {
                 requestString += "&\(key)=\(encodedValue)"
             } else if let value = parameters[key] as? Int {
                 requestString += "&\(key)=\(value)"

@@ -36,13 +36,13 @@ public struct Edited {
 
 // MARK: - History
 public struct History {
-    internal(set) public var latest: NSDate?
+    internal(set) public var latest: Date?
     internal(set) public var messages = [Message]()
     public let hasMore: Bool?
     
     internal init(history: [String: AnyObject]?) {
         if let latestStr = history?["latest"] as? String, latestDouble = Double(latestStr) {
-            latest = NSDate(timeIntervalSince1970: NSTimeInterval(latestDouble))
+            latest = Date(timeIntervalSince1970: TimeInterval(latestDouble))
         }
         if let msgs = history?["messages"] as? [[String: AnyObject]] {
             for message in msgs {
@@ -67,7 +67,7 @@ public struct Reaction {
         self.user = user
     }
     
-    static func reactionsFromArray(array: [[String: AnyObject]]?) -> [Reaction] {
+    static func reactionsFromArray(_ array: [[String: AnyObject]]?) -> [Reaction] {
         var reactions = [Reaction]()
         if let array = array {
             for reaction in array {
@@ -249,7 +249,7 @@ public struct CustomProfileField {
         self.id = id
     }
     
-    internal mutating func updateProfileField(profile: CustomProfileField?) {
+    internal mutating func updateProfileField(_ profile: CustomProfileField?) {
         id = profile?.id != nil ? profile?.id : id
         alt = profile?.alt != nil ? profile?.alt : alt
         value = profile?.value != nil ? profile?.value : value

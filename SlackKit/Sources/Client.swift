@@ -53,7 +53,7 @@ public class Client: WebSocketDelegate {
     
     public var token = "SLACK_AUTH_TOKEN"
     
-    public func setAuthToken(token: String) {
+    public func setAuthToken(_ token: String) {
         self.token = token
     }
     
@@ -64,19 +64,19 @@ public class Client: WebSocketDelegate {
     internal var webSocket: WebSocket?
     internal let api = NetworkInterface()
 
-    private let pingPongQueue = dispatch_queue_create("com.launchsoft.SlackKit", DISPATCH_QUEUE_SERIAL)
+    private let pingPongQueue = DispatchQueue(label: "com.launchsoft.SlackKit", attributes: DispatchQueueAttributes.serial)
     internal var ping: Double?
     internal var pong: Double?
     
-    internal var pingInterval: NSTimeInterval?
-    internal var timeout: NSTimeInterval?
+    internal var pingInterval: TimeInterval?
+    internal var timeout: TimeInterval?
     internal var reconnect: Bool?
     
     required public init(apiToken: String) {
         self.token = apiToken
     }
     
-    public func connect(simpleLatest simpleLatest: Bool? = nil, noUnreads: Bool? = nil, mpimAware: Bool? = nil, pingInterval: NSTimeInterval? = nil, timeout: NSTimeInterval? = nil, reconnect: Bool? = nil) {
+    public func connect(simpleLatest: Bool? = nil, noUnreads: Bool? = nil, mpimAware: Bool? = nil, pingInterval: TimeInterval? = nil, timeout: TimeInterval? = nil, reconnect: Bool? = nil) {
         self.pingInterval = pingInterval
         self.timeout = timeout
         self.reconnect = reconnect
@@ -84,7 +84,7 @@ public class Client: WebSocketDelegate {
             (response) -> Void in
             self.initialSetup(response)
             if let socketURL = response["url"] as? String {
-                let url = NSURL(string: socketURL)
+                let url = URL(string: socketURL)
                 self.webSocket = WebSocket(url: url!)
                 self.webSocket?.delegate = self
                 self.webSocket?.connect()
@@ -99,42 +99,42 @@ public class Client: WebSocketDelegate {
     }
     
     //MARK: - RTM Message send
-    public func sendMessage(message: String, channelID: String) {
+    public func sendMessage(_ message: String, channelID: String) {
         guard connected else { return }
 
         if let data = try? formatMessageToSlackJsonString(msg: message, channel: channelID),
-            string = NSString(data: data, encoding: NSUTF8StringEncoding) as? String {
+            string = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
             webSocket?.writeString(string)
         }
     }
     
-    private func formatMessageToSlackJsonString(message: (msg: String, channel: String)) throws -> NSData {
+    private func formatMessageToSlackJsonString(_ message: (msg: String, channel: String)) throws -> Data {
         let json: [String: AnyObject] = [
-            "id": NSDate().slackTimestamp(),
+            "id": Date().slackTimestamp(),
             "type": "message",
             "channel": message.channel,
             "text": message.msg.slackFormatEscaping()
         ]
         addSentMessage(json)
-        return try NSJSONSerialization.dataWithJSONObject(json, options: [])
+        return try JSONSerialization.data(withJSONObject: json, options: [])
     }
     
-    private func addSentMessage(dictionary: [String: AnyObject]) {
+    private func addSentMessage(_ dictionary: [String: AnyObject]) {
         var message = dictionary
         guard let id = message["id"] as? NSNumber else {
             return
         }
         let ts = String(id)
-        message.removeValueForKey("id")
+        message.removeValue(forKey: "id")
         message["ts"] = ts
         message["user"] = self.authenticatedUser?.id
         sentMessages[ts] = Message(message: message)
     }
     
     //MARK: - RTM Ping
-    private func pingRTMServerAtInterval(interval: NSTimeInterval) {
-        let delay = dispatch_time(DISPATCH_TIME_NOW, Int64(interval * Double(NSEC_PER_SEC)))
-        dispatch_after(delay, pingPongQueue, {
+    private func pingRTMServerAtInterval(_ interval: TimeInterval) {
+        let delay = DispatchTime.now() + interval
+        pingPongQueue.after(when: delay, execute: {
             guard self.connected && self.timeoutCheck() else {
                 self.disconnect()
                 return
@@ -149,13 +149,13 @@ public class Client: WebSocketDelegate {
             return
         }
         let json: [String: AnyObject] = [
-            "id": NSDate().slackTimestamp(),
+            "id": Date().slackTimestamp(),
             "type": "ping",
         ]
-        guard let data = try? NSJSONSerialization.dataWithJSONObject(json, options: []) else {
+        guard let data = try? JSONSerialization.data(withJSONObject: json, options: []) else {
             return
         }
-        let string = NSString(data: data, encoding: NSUTF8StringEncoding)
+        let string = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
         if let writePing = string as? String {
             ping = json["id"] as? Double
             webSocket?.writeString(writePing)
@@ -176,7 +176,7 @@ public class Client: WebSocketDelegate {
     }
     
     //MARK: - Client setup
-    private func initialSetup(json: [String: AnyObject]) {
+    private func initialSetup(_ json: [String: AnyObject]) {
         team = Team(team: json["team"] as? [String: AnyObject])
         authenticatedUser = User(user: json["self"] as? [String: AnyObject])
         authenticatedUser?.doNotDisturbStatus = DoNotDisturbStatus(status: json["dnd"] as? [String: AnyObject])
@@ -189,28 +189,28 @@ public class Client: WebSocketDelegate {
         enumerateSubteams(json["subteams"] as? [String: AnyObject])
     }
     
-    private func addUser(aUser: [String: AnyObject]) {
+    private func addUser(_ aUser: [String: AnyObject]) {
         let user = User(user: aUser)
         if let id = user.id {
             users[id] = user
         }
     }
     
-    private func addChannel(aChannel: [String: AnyObject]) {
+    private func addChannel(_ aChannel: [String: AnyObject]) {
         let channel = Channel(channel: aChannel)
         if let id = channel.id {
             channels[id] = channel
         }
     }
     
-    private func addBot(aBot: [String: AnyObject]) {
+    private func addBot(_ aBot: [String: AnyObject]) {
         let bot = Bot(bot: aBot)
         if let id = bot.id {
             bots[id] = bot
         }
     }
     
-    private func enumerateSubteams(subteams: [String: AnyObject]?) {
+    private func enumerateSubteams(_ subteams: [String: AnyObject]?) {
         if let subteams = subteams {
             if let all = subteams["all"] as? [[String: AnyObject]] {
                 for item in all {
@@ -228,7 +228,7 @@ public class Client: WebSocketDelegate {
     }
     
     // MARK: - Utilities
-    private func enumerateObjects(array: [AnyObject]?, initalizer: ([String: AnyObject])-> Void) {
+    private func enumerateObjects(_ array: [AnyObject]?, initalizer: ([String: AnyObject])-> Void) {
         if let array = array {
             for object in array {
                 if let dictionary = object as? [String: AnyObject] {
@@ -239,13 +239,13 @@ public class Client: WebSocketDelegate {
     }
     
     // MARK: - WebSocketDelegate
-    public func websocketDidConnect(socket: WebSocket) {
+    public func websocketDidConnect(_ socket: WebSocket) {
         if let pingInterval = pingInterval {
             pingRTMServerAtInterval(pingInterval)
         }
     }
     
-    public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
+    public func websocketDidDisconnect(_ socket: WebSocket, error: NSError?) {
         connected = false
         webSocket = nil
         authenticatedUser = nil
@@ -255,16 +255,16 @@ public class Client: WebSocketDelegate {
         }
     }
     
-    public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
-        guard let data = text.dataUsingEncoding(NSUTF8StringEncoding) else {
+    public func websocketDidReceiveMessage(_ socket: WebSocket, text: String) {
+        guard let data = text.data(using: String.Encoding.utf8) else {
             return
         }
 
-        if let json = (try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments)) as? [String: AnyObject] {
+        if let json = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)) as? [String: AnyObject] {
             dispatch(json)
         }
     }
 
-    public func websocketDidReceiveData(socket: WebSocket, data: NSData) {}
+    public func websocketDidReceiveData(_ socket: WebSocket, data: Data) {}
     
 }

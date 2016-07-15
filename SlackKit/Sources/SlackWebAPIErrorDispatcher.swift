@@ -23,274 +23,274 @@
 
 import Foundation
 
-public enum SlackError: ErrorType {
-    case AccountInactive
-    case AlreadyArchived
-    case AlreadyInChannel
-    case AlreadyPinned
-    case AlreadyReacted
-    case AlreadyStarred
-    case BadClientSecret
-    case BadRedirectURI
-    case BadTimeStamp
-    case CantArchiveGeneral
-    case CantDelete
-    case CantDeleteFile
-    case CantDeleteMessage
-    case CantInvite
-    case CantInviteSelf
-    case CantKickFromGeneral
-    case CantKickFromLastChannel
-    case CantKickSelf
-    case CantLeaveGeneral
-    case CantLeaveLastChannel
-    case CantUpdateMessage
-    case ChannelNotFound
-    case ComplianceExportsPreventDeletion
-    case EditWindowClosed
-    case FileCommentNotFound
-    case FileDeleted
-    case FileNotFound
-    case FileNotShared
-    case GroupContainsOthers
-    case InvalidArrayArg
-    case InvalidAuth
-    case InvalidChannel
-    case InvalidCharSet
-    case InvalidClientID
-    case InvalidCode
-    case InvalidFormData
-    case InvalidName
-    case InvalidPostType
-    case InvalidPresence
-    case InvalidTS
-    case InvalidTSLatest
-    case InvalidTSOldest
-    case IsArchived
-    case LastMember
-    case LastRAChannel
-    case MessageNotFound
-    case MessageTooLong
-    case MigrationInProgress
-    case MissingDuration
-    case MissingPostType
-    case NameTaken
-    case NoChannel
-    case NoComment
-    case NoItemSpecified
-    case NoReaction
-    case NoText
-    case NotArchived
-    case NotAuthed
-    case NotEnoughUsers
-    case NotInChannel
-    case NotInGroup
-    case NotPinned
-    case NotStarred
-    case OverPaginationLimit
-    case PaidOnly
-    case PermissionDenied
-    case PostingToGeneralChannelDenied
-    case RateLimited
-    case RequestTimeout
-    case RestrictedAction
-    case SnoozeEndFailed
-    case SnoozeFailed
-    case SnoozeNotActive
-    case TooLong
-    case TooManyEmoji
-    case TooManyReactions
-    case TooManyUsers
-    case UnknownError
-    case UnknownType
-    case UserDisabled
-    case UserDoesNotOwnChannel
-    case UserIsBot
-    case UserIsRestricted
-    case UserIsUltraRestricted
-    case UserListNotSupplied
-    case UserNotFound
-    case UserNotVisible
+public enum SlackError: ErrorProtocol {
+    case accountInactive
+    case alreadyArchived
+    case alreadyInChannel
+    case alreadyPinned
+    case alreadyReacted
+    case alreadyStarred
+    case badClientSecret
+    case badRedirectURI
+    case badTimeStamp
+    case cantArchiveGeneral
+    case cantDelete
+    case cantDeleteFile
+    case cantDeleteMessage
+    case cantInvite
+    case cantInviteSelf
+    case cantKickFromGeneral
+    case cantKickFromLastChannel
+    case cantKickSelf
+    case cantLeaveGeneral
+    case cantLeaveLastChannel
+    case cantUpdateMessage
+    case channelNotFound
+    case complianceExportsPreventDeletion
+    case editWindowClosed
+    case fileCommentNotFound
+    case fileDeleted
+    case fileNotFound
+    case fileNotShared
+    case groupContainsOthers
+    case invalidArrayArg
+    case invalidAuth
+    case invalidChannel
+    case invalidCharSet
+    case invalidClientID
+    case invalidCode
+    case invalidFormData
+    case invalidName
+    case invalidPostType
+    case invalidPresence
+    case invalidTS
+    case invalidTSLatest
+    case invalidTSOldest
+    case isArchived
+    case lastMember
+    case lastRAChannel
+    case messageNotFound
+    case messageTooLong
+    case migrationInProgress
+    case missingDuration
+    case missingPostType
+    case nameTaken
+    case noChannel
+    case noComment
+    case noItemSpecified
+    case noReaction
+    case noText
+    case notArchived
+    case notAuthed
+    case notEnoughUsers
+    case notInChannel
+    case notInGroup
+    case notPinned
+    case notStarred
+    case overPaginationLimit
+    case paidOnly
+    case permissionDenied
+    case postingToGeneralChannelDenied
+    case rateLimited
+    case requestTimeout
+    case restrictedAction
+    case snoozeEndFailed
+    case snoozeFailed
+    case snoozeNotActive
+    case tooLong
+    case tooManyEmoji
+    case tooManyReactions
+    case tooManyUsers
+    case unknownError
+    case unknownType
+    case userDisabled
+    case userDoesNotOwnChannel
+    case userIsBot
+    case userIsRestricted
+    case userIsUltraRestricted
+    case userListNotSupplied
+    case userNotFound
+    case userNotVisible
     // Client
-    case ClientNetworkError
-    case ClientJSONError
+    case clientNetworkError
+    case clientJSONError
     // HTTP
-    case TooManyRequests
-    case UnknownHTTPError
+    case tooManyRequests
+    case unknownHTTPError
 }
 
 internal struct ErrorDispatcher {
     
-    static func dispatch(error: String) -> SlackError {
+    static func dispatch(_ error: String) -> SlackError {
         switch error {
         case "account_inactive":
-            return .AccountInactive
+            return .accountInactive
         case "already_in_channel":
-            return .AlreadyInChannel
+            return .alreadyInChannel
         case "already_pinned":
-            return .AlreadyPinned
+            return .alreadyPinned
         case "already_reacted":
-            return .AlreadyReacted
+            return .alreadyReacted
         case "already_starred":
-            return .AlreadyStarred
+            return .alreadyStarred
         case "bad_client_secret":
-            return .BadClientSecret
+            return .badClientSecret
         case "bad_redirect_uri":
-            return .BadRedirectURI
+            return .badRedirectURI
         case "bad_timestamp":
-            return .BadTimeStamp
+            return .badTimeStamp
         case "cant_delete":
-            return .CantDelete
+            return .cantDelete
         case "cant_delete_file":
-            return .CantDeleteFile
+            return .cantDeleteFile
         case "cant_delete_message":
-            return .CantDeleteMessage
+            return .cantDeleteMessage
         case "cant_invite":
-            return .CantInvite
+            return .cantInvite
         case "cant_invite_self":
-            return .CantInviteSelf
+            return .cantInviteSelf
         case "cant_kick_from_general":
-            return .CantKickFromGeneral
+            return .cantKickFromGeneral
         case "cant_kick_from_last_channel":
-            return .CantKickFromLastChannel
+            return .cantKickFromLastChannel
         case "cant_kick_self":
-            return .CantKickSelf
+            return .cantKickSelf
         case "cant_leave_general":
-            return .CantLeaveGeneral
+            return .cantLeaveGeneral
         case "cant_leave_last_channel":
-            return .CantLeaveLastChannel
+            return .cantLeaveLastChannel
         case "cant_update_message":
-            return .CantUpdateMessage
+            return .cantUpdateMessage
         case "compliance_exports_prevent_deletion":
-            return .ComplianceExportsPreventDeletion
+            return .complianceExportsPreventDeletion
         case "channel_not_found":
-            return .ChannelNotFound
+            return .channelNotFound
         case "edit_window_closed":
-            return .EditWindowClosed
+            return .editWindowClosed
         case "file_comment_not_found":
-            return .FileCommentNotFound
+            return .fileCommentNotFound
         case "file_deleted":
-            return .FileDeleted
+            return .fileDeleted
         case "file_not_found":
-            return .FileNotFound
+            return .fileNotFound
         case "file_not_shared":
-            return .FileNotShared
+            return .fileNotShared
         case "group_contains_others":
-            return .GroupContainsOthers
+            return .groupContainsOthers
         case "invalid_array_arg":
-            return .InvalidArrayArg
+            return .invalidArrayArg
         case "invalid_auth":
-            return .InvalidAuth
+            return .invalidAuth
         case "invalid_channel":
-            return .InvalidChannel
+            return .invalidChannel
         case "invalid_charset":
-            return .InvalidCharSet
+            return .invalidCharSet
         case "invalid_client_id":
-            return .InvalidClientID
+            return .invalidClientID
         case "invalid_code":
-            return .InvalidCode
+            return .invalidCode
         case "invalid_form_data":
-            return .InvalidFormData
+            return .invalidFormData
         case "invalid_name":
-            return .InvalidName
+            return .invalidName
         case "invalid_post_type":
-            return .InvalidPostType
+            return .invalidPostType
         case "invalid_presence":
-            return .InvalidPresence
+            return .invalidPresence
         case "invalid_timestamp":
-            return .InvalidTS
+            return .invalidTS
         case "invalid_ts_latest":
-            return .InvalidTSLatest
+            return .invalidTSLatest
         case "invalid_ts_oldest":
-            return .InvalidTSOldest
+            return .invalidTSOldest
         case "is_archived":
-            return .IsArchived
+            return .isArchived
         case "last_member":
-            return .LastMember
+            return .lastMember
         case "last_ra_channel":
-            return .LastRAChannel
+            return .lastRAChannel
         case "message_not_found":
-            return .MessageNotFound
+            return .messageNotFound
         case "msg_too_long":
-            return .MessageTooLong
+            return .messageTooLong
         case "migration_in_progress":
-            return .MigrationInProgress
+            return .migrationInProgress
         case "missing_duration":
-            return .MissingDuration
+            return .missingDuration
         case "missing_post_type":
-            return .MissingPostType
+            return .missingPostType
         case "name_taken":
-            return .NameTaken
+            return .nameTaken
         case "no_channel":
-            return .NoChannel
+            return .noChannel
         case "no_comment":
-            return .NoComment
+            return .noComment
         case "no_reaction":
-            return .NoReaction
+            return .noReaction
         case "no_item_specified":
-            return .NoItemSpecified
+            return .noItemSpecified
         case "no_text":
-            return .NoText
+            return .noText
         case "not_archived":
-            return .NotArchived
+            return .notArchived
         case "not_authed":
-            return .NotAuthed
+            return .notAuthed
         case "not_enough_users":
-            return .NotEnoughUsers
+            return .notEnoughUsers
         case "not_in_channel":
-            return .NotInChannel
+            return .notInChannel
         case "not_in_group":
-            return .NotInGroup
+            return .notInGroup
         case "not_pinned":
-            return .NotPinned
+            return .notPinned
         case "not_starred":
-            return .NotStarred
+            return .notStarred
         case "over_pagination_limit":
-            return .OverPaginationLimit
+            return .overPaginationLimit
         case "paid_only":
-            return .PaidOnly
+            return .paidOnly
         case "perimssion_denied":
-            return .PermissionDenied
+            return .permissionDenied
         case "posting_to_general_channel_denied":
-            return .PostingToGeneralChannelDenied
+            return .postingToGeneralChannelDenied
         case "rate_limited":
-            return .RateLimited
+            return .rateLimited
         case "request_timeout":
-            return .RequestTimeout
+            return .requestTimeout
         case "snooze_end_failed":
-            return .SnoozeEndFailed
+            return .snoozeEndFailed
         case "snooze_failed":
-            return .SnoozeFailed
+            return .snoozeFailed
         case "snooze_not_active":
-            return .SnoozeNotActive
+            return .snoozeNotActive
         case "too_long":
-            return .TooLong
+            return .tooLong
         case "too_many_emoji":
-            return .TooManyEmoji
+            return .tooManyEmoji
         case "too_many_reactions":
-            return .TooManyReactions
+            return .tooManyReactions
         case "too_many_users":
-            return .TooManyUsers
+            return .tooManyUsers
         case "unknown_type":
-            return .UnknownType
+            return .unknownType
         case "user_disabled":
-            return .UserDisabled
+            return .userDisabled
         case "user_does_not_own_channel":
-            return .UserDoesNotOwnChannel
+            return .userDoesNotOwnChannel
         case "user_is_bot":
-            return .UserIsBot
+            return .userIsBot
         case "user_is_restricted":
-            return .UserIsRestricted
+            return .userIsRestricted
         case "user_is_ultra_restricted":
-            return .UserIsUltraRestricted
+            return .userIsUltraRestricted
         case "user_list_not_supplied":
-            return .UserListNotSupplied
+            return .userListNotSupplied
         case "user_not_found":
-            return .UserNotFound
+            return .userNotFound
         case "user_not_visible":
-            return .UserNotVisible
+            return .userNotVisible
         default:
-            return .UnknownError
+            return .unknownError
         }
     }
 }

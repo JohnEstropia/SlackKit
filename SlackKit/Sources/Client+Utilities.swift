@@ -23,29 +23,29 @@
 
 import Foundation
 
-public enum ClientError: ErrorType {
-    case ChannelDoesNotExist
-    case UserDoesNotExist
+public enum ClientError: ErrorProtocol {
+    case channelDoesNotExist
+    case userDoesNotExist
 }
 
 public extension Client {
     
     //MARK: - User & Channel
-    public func getChannelIDByName(name: String) throws -> String {
+    public func getChannelIDByName(_ name: String) throws -> String {
         guard let id = channels.filter({$0.1.name == stripString(name)}).first?.0 else {
-            throw ClientError.ChannelDoesNotExist
+            throw ClientError.channelDoesNotExist
         }
         return id
     }
 
-    public func getUserIDByName(name: String) throws -> String {
+    public func getUserIDByName(_ name: String) throws -> String {
         guard let id = users.filter({$0.1.name == stripString(name)}).first?.0 else {
-            throw ClientError.UserDoesNotExist
+            throw ClientError.userDoesNotExist
         }
         return id
     }
 
-    public func getImIDForUserWithID(id: String, success: (imID: String?)->Void, failure: (error: SlackError)->Void) {
+    public func getImIDForUserWithID(_ id: String, success: (imID: String?)->Void, failure: (error: SlackError)->Void) {
         let ims = channels.filter{$0.1.isIM == true}
         let channel = ims.filter{$0.1.user == id}.first
         if let channel = channel {
@@ -56,10 +56,10 @@ public extension Client {
     }
 
     //MARK: - Utilities
-    internal func stripString(string: String) -> String {
+    internal func stripString(_ string: String) -> String {
         var strippedString = string
         if string[string.startIndex] == "@" || string[string.startIndex] == "#" {
-            strippedString = string.substringFromIndex(string.startIndex.advancedBy(1))
+            strippedString = string.substring(from: string.characters.index(string.startIndex, offsetBy: 1))
         }
         return strippedString
     }

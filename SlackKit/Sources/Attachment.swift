@@ -97,7 +97,7 @@ public struct Attachment {
         return attachment
     }
     
-    private func fieldJSONArray(fields: [AttachmentField]?) -> [[String: AnyObject]] {
+    private func fieldJSONArray(_ fields: [AttachmentField]?) -> [[String: AnyObject]] {
         var returnValue = [[String: AnyObject]]()
         if let f = fields {
             for field in f {
