@@ -28,6 +28,6 @@ let package = Package(
     targets: [],
     dependencies: [
         .Package(url: "https://github.com/JohnEstropia/Starscream",
-            majorVersion: 1),
+            majorVersion: 2),
     ]
 )
