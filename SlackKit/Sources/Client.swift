@@ -76,7 +76,7 @@ public class Client: WebSocketDelegate {
         self.token = apiToken
     }
     
-    public func connect(simpleLatest: Bool? = nil, noUnreads: Bool? = nil, mpimAware: Bool? = nil, pingInterval: TimeInterval? = nil, timeout: TimeInterval? = nil, reconnect: Bool? = nil) {
+    public func connect(_ simpleLatest: Bool? = nil, noUnreads: Bool? = nil, mpimAware: Bool? = nil, pingInterval: TimeInterval? = nil, timeout: TimeInterval? = nil, reconnect: Bool? = nil) {
         self.pingInterval = pingInterval
         self.timeout = timeout
         self.reconnect = reconnect

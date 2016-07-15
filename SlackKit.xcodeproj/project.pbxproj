@@ -291,6 +291,7 @@
 				TargetAttributes = {
 					26072A331BB48B3A00CD650C = {
 						CreatedOnToolsVersion = 7.0;
+						LastSwiftMigration = 0800;
 					};
 					263993951CE90EE0004A6E93 = {
 						LastSwiftMigration = 0800;
@@ -531,6 +532,7 @@
 				PRODUCT_NAME = SlackKit;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -555,6 +557,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.launchsoft.SlackKit;
 				PRODUCT_NAME = SlackKit;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
